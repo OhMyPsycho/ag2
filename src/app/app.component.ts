@@ -19,6 +19,11 @@ interface SendMail {
   message: string;
 }
 
+interface UserSelect {
+  email: string;
+  token: any;
+}
+
 
 @Component({
   selector: 'app-root',
@@ -41,6 +46,9 @@ export class AppComponent implements OnInit {
     to: '',
     subject: ''
   };
+  currentUser: string = '';
+  keyUser: string = 'usertoken';
+  listOfSelect: UserSelect[] = []
 
   constructor(private ref: ChangeDetectorRef) {
 
@@ -67,11 +75,14 @@ export class AppComponent implements OnInit {
       // gapi.client.setApiKey(this.apiKey);
       this.isLoading = false;
       console.log(gapi.client.getToken())
-      console.log(gapi.auth2.getAuthInstance().currentUser.get());
+      console.log(gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile());
       if(gapi.client.getToken() !== null) {
         this.loadGmailApi()
       }
       console.log("ready")
+      console.log({gapi, google})
+      // console.log(gapi.client.gmail.users.getProfile())
+      console.log(gapi.auth2.BasicProfile())
       // this.checkAuth();
     }).catch((error: any) => {
       console.log(error)
@@ -86,10 +97,28 @@ export class AppComponent implements OnInit {
     }, this.handleAuthResult);
   }
 
+  onChangeUser = (event: any) => {
+    console.log(event.target.value)
+    let token = window.localStorage.getItem(event.target.value);
+    if(token) {
+      this.listOfData = []
+      token = JSON.parse(token!);
+      gapi.client.setToken(token)
+      this.loadGmailApi()
+    }
+    
+    
+  }
+
   handleAuthResult = (authResult: any) => {
     if(authResult && !authResult.error) {
+      const email = gapi.auth2.getAuthInstance().currentUser.get().getBasicProfile().getEmail();
+      window.localStorage.setItem(email, JSON.stringify(authResult));      
       this.loadGmailApi()
-    } 
+    } else {
+      // console.log("Error")
+      console.log(authResult)
+    }
     // else {
     //   this.checkAuth()
     // }

@@ -1,8 +1,13 @@
 <div>
   <h1>Correo Gmail</h1>
   <p *ngIf="isLoading">Loading...</p>
+  <select (change)="onChangeUser($event)">
+    <option value="1300kss@gmail.com">1300kss@gmail.com</option>
+    <option value="1800kss@gmail.com">1800kss@gmail.com</option>
+  </select>
+  <button (click)="checkAuth()" mat-raised-button color="primary">Add Acount</button>
   <button (click)="checkAuth()" *ngIf="!isLoading && listOfData.length === 0" mat-raised-button color="primary">Authentication</button>
-  <button (click)="checkAuth()" *ngIf="isLoading && listOfData.length > 0" mat-raised-button color="primary">Compose</button>
+  <!-- <button (click)="checkAuth()" *ngIf="isLoading && listOfData.length > 0" mat-raised-button color="primary">Compose</button> -->
   
   <div  *ngIf="isVisibleFrom">
     <form (ngSubmit)="submit()">
